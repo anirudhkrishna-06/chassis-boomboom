@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invente - BoomBoomRobota</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Orbitron', sans-serif;
+      background: #000;
+      color: #00ffff;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      position: relative;
+    }
+
+    /* Disclaimer Styling */
+    #disclaimer {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 1.0rem;
+      font-weight: 600;
+      color: #ffffff;
+      text-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff, 0 0 60px #00ffff;
+      z-index: 1000;
+      animation: disclaimerSequence 3s ease-in-out forwards;
+      opacity: 0;
+      text-align: center;
+      padding: 0 20px;
+    }
+
+    @keyframes disclaimerSequence {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+      20% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+    }
+
+    /* Fest Name Styling */
+    #fest-name {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 999;
+      opacity: 0;
+      animation: festNameSequence 3s ease-in-out 3s forwards;
+    }
+
+    #fest-name img {
+      max-width: 50vw;
+      max-height: 25vh;
+      animation: glowPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes festNameSequence {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(1.0); }
+      20% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+      80% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+      100% { opacity: 0; transform: translate(-50%, -50%) scale(1.1); }
+    }
+
+
+    /* Event Name Styling */
+    #event-name {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 998;
+      opacity: 0;
+      animation: eventNameSequence 3s ease-in-out 6s forwards;
+    }
+
+    #event-name img {
+      max-width: 120vw;
+      max-height: 60vh;
+    }
+
+    @keyframes eventNameSequence {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(1.0); }
+      20% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+      80% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+      100% { opacity: 0; transform: translate(-50%, -50%) scale(1.1); }
+    }
+
+    
+
+    /* Card Container - Fixed positioning issue */
+    .card-container {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      perspective: 1000px;
+      opacity: 0;
+      animation: cardAppear 1s ease-in-out 8s forwards;
+      z-index: 997;
+    }
+
+    @keyframes cardAppear {
+      0% { 
+        opacity: 0; 
+        transform: translate(-50%, -50%) scale(0.3) rotateY(-90deg); 
+      }
+      100% { 
+        opacity: 1; 
+        transform: translate(-50%, -50%) scale(1) rotateY(0deg); 
+      }
+    }
+
+    /* Card Styling - Fixed transform issues */
+    .card {
+      width: 300px;
+      height: 400px;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      cursor: pointer;
+      pointer-events: auto;
+    }
+
+    .card.flipped {
+      transform: rotateY(180deg);
+    }
+
+    .card-front,
+    .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      box-shadow: 0 0 50px rgba(0, 255, 255, 0.3);
+      border: 2px solid transparent;
+      background: linear-gradient(135deg, #1a1a2e, #16213e) padding-box,
+                  linear-gradient(135deg, #00ffff, #0099ff, #00ff88) border-box;
+      overflow: hidden;
+      pointer-events: none;
+      
+    }
+
+    .card-front::before,
+    .card-back::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(0, 153, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(0, 255, 136, 0.05) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .card-front {
+      background: linear-gradient(135deg, #2a2a3e, #1a1a2e) padding-box,
+                  linear-gradient(135deg, #00ffff, #0099ff) border-box;
+    }
+
+    .card-front p {
+      font-size: 1.2rem;
+      font-weight: 600;
+      text-align: center;
+      color: #00ffff;
+      text-shadow: 0 0 20px #00ffff;
+      animation: tapPrompt 2s ease-in-out infinite;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    @keyframes tapPrompt {
+      0%, 100% { transform: scale(1); text-shadow: 0 0 20px #00ffff; }
+      50% { transform: scale(1.05); text-shadow: 0 0 30px #00ffff, 0 0 50px #00ffff; }
+    }
+
+    .card-back {
+      transform: rotateY(180deg);
+      background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9)) padding-box,
+                  linear-gradient(135deg, #00ff88, #00ffff, #0099ff) border-box;
+    }
+
+    .card-back h2 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #00ff88;
+      text-shadow: 0 0 30px #00ff88;
+      margin-bottom: 30px;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      z-index: 1;
+    }
+
+    .card-back img {
+      max-width: 200px;
+      max-height: 200px;
+      border-radius: 15px;
+      box-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+      border: 2px solid #00ff88;
+      filter: drop-shadow(0 0 20px rgba(0, 255, 136, 0.3));
+      z-index: 1;
+    }
+    .card-back .unlock-text {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #00ffff;
+        text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 40px #00ff88;
+        margin-bottom: 15px;
+        text-align: center;
+        letter-spacing: 1px;
+        animation: shimmer 2.5s infinite;
+        }
+
+        @keyframes shimmer {
+        0%   { text-shadow: 0 0 10px #00ffff; opacity: 0.8; }
+        50%  { text-shadow: 0 0 25px #00ffff, 0 0 40px #00ff88; opacity: 1; }
+        100% { text-shadow: 0 0 10px #00ffff; opacity: 0.8; }
+        }
+
+            
+    /* Mobile Responsiveness */
+    @media (max-width: 768px) {
+      .card {
+        width: 280px;
+        height: 380px;
+      }
+      
+      #disclaimer {
+        font-size: 1.2rem;
+        padding: 0 30px;
+      }
+      
+      .card-back h2 {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+      }
+      
+      .card-back img {
+        max-width: 180px;
+        max-height: 180px;
+      }
+      
+      .card-front p {
+        font-size: 1.1rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        width: 260px;
+        height: 350px;
+      }
+      
+      #disclaimer {
+        font-size: 1rem;
+      }
+      
+      .card-back h2 {
+        font-size: 1.3rem;
+      }
+      
+      .card-back img {
+        max-width: 150px;
+        max-height: 150px;
+      }
+    }
+
+    /* Hover Effects for Desktop */
+    @media (hover: hover) {
+      .card:hover:not(.flipped) {
+        transform: scale(1.02);
+      }
+    }
+
+    /* Loading fallback */
+    .loading-fallback {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #00ffff;
+      text-shadow: 0 0 20px #00ffff;
+      z-index: 10000;
+      opacity: 0;
+      animation: loadingFallback 2s ease-in-out 15s forwards;
+    }
+
+    @keyframes loadingFallback {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Disclaimer -->
+  <div id="disclaimer">🔊 Turn up the volume</div>
+  
+  <!-- Fest & Event Branding -->
+  <div id="fest-name"><img src="invente.jpg" alt="Invente" onerror="this.style.display='none'"></div>
+  <div id="event-name"><img src="eventname.png" alt="BoomBoomRobota" onerror="this.style.display='none'"></div>
+  
+  <!-- Background Music -->
+  <audio id="bg-music" loop preload="auto">
+    <source src="music.wav" type="audio/mpeg">
+    <source src="music.ogg" type="audio/ogg">
+  </audio>
+  
+  <!-- Card Section -->
+  <div class="card-container">
+    <div class="card" id="main-card">
+      <div class="card-front">
+        <p>Tap to Reveal</p>
+      </div>
+      <div class="card-back">
+        <p class="unlock-text">Congrats! You have unlocked</p>
+        <h2>Chassis Module</h2>
+          </div>
+    </div>
+  </div>
+  
+  
+
+  <!-- Loading fallback (hidden by default) -->
+  <div class="loading-fallback" id="loading-fallback" style="display: none;">
+    Assets loading... Tap anywhere to continue
+  </div>
+
+  <script>
+    // Strict mode for better error handling
+    'use strict';
+    
+    // Get DOM elements
+    const bgMusic = document.getElementById('bg-music');
+    const bgVideo = document.getElementById('bg-video');
+    const card = document.getElementById('main-card');
+    const loadingFallback = document.getElementById('loading-fallback');
+    
+    // State variables
+    let musicStarted = false;
+    let cardFlipped = false;
+    let assetsLoaded = false;
+
+    // Function to start music safely
+    function startMusic() {
+      if (!musicStarted && bgMusic) {
+        try {
+          bgMusic.volume = 0.7;
+          const playPromise = bgMusic.play();
+          if (playPromise !== undefined) {
+            playPromise.then(() => {
+              musicStarted = true;
+              console.log('Music started successfully');
+            }).catch(error => {
+              console.log('Music autoplay prevented:', error);
+              // Will start on user interaction
+            });
+          }
+        } catch (error) {
+          console.log('Music error:', error);
+        }
+      }
+    }
+
+    // Function to load and start video
+   
+
+    // Card flip functionality with error handling
+    function flipCard() {
+      if (!cardFlipped && card) {
+        try {
+          // Start music if not already started
+          startMusic();
+          
+          // Flip the card
+          card.classList.add('flipped');
+          cardFlipped = true;
+          
+          // Start video after flip animation begins
+          setTimeout(startVideo, 400);
+          
+          console.log('Card flipped successfully');
+        } catch (error) {
+          console.log('Card flip error:', error);
+        }
+      }
+    }
+
+    // Enhanced user interaction handler
+    function handleUserInteraction() {
+      startMusic();
+      
+      // Hide loading fallback if visible
+      if (loadingFallback) {
+        loadingFallback.style.display = 'none';
+      }
+    }
+
+    // Wait for DOM to be fully loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('DOM loaded');
+      
+      // Try to start music immediately (will work if autoplay is allowed)
+      setTimeout(startMusic, 1000);
+      
+      // Add card click event with error handling
+      if (card) {
+        card.addEventListener('click', flipCard);
+        card.addEventListener('touchend', function(e) {
+          e.preventDefault(); // Prevent double-tap zoom
+          flipCard();
+        });
+      }
+
+      // Add fallback interaction handlers
+      document.addEventListener('click', handleUserInteraction, { once: false });
+      document.addEventListener('touchstart', handleUserInteraction, { once: false });
+      document.addEventListener('keydown', handleUserInteraction, { once: false });
+
+      // Preload video
+      if (bgVideo) {
+        bgVideo.load();
+      }
+
+      // Show loading fallback if assets seem to be missing
+      setTimeout(() => {
+        if (!assetsLoaded && !cardFlipped) {
+          loadingFallback.style.display = 'block';
+        }
+      }, 16000);
+    });
+
+    // Handle page visibility changes (pause/resume media)
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) {
+        if (bgMusic && !bgMusic.paused) bgMusic.pause();
+        if (bgVideo && !bgVideo.paused) bgVideo.pause();
+      } else {
+        if (musicStarted && bgMusic && bgMusic.paused) bgMusic.play().catch(() => {});
+        if (cardFlipped && bgVideo && bgVideo.paused) bgVideo.play().catch(() => {});
+      }
+    });
+
+    // Error handling for missing assets
+    window.addEventListener('error', function(e) {
+      console.log('Asset loading error:', e.filename, e.message);
+      // Continue functionality even if some assets fail to load
+    });
+
+    console.log('Script loaded successfully');
+  </script>
+</body>
+</html>
